@@ -1,0 +1,40 @@
+# Load necessary libraries
+library(DESeq2)
+library(tidyverse)
+
+# Create a realistic simulated breast cancer dataset
+set.seed(123) # For reproducibility
+
+# Simulate 1000 genes and 12 samples (6 basal, 6 luminal)
+n_genes <- 1000
+n_samples <- 12
+
+# Gene names (simulated ENSEMBL IDs)
+gene_ids <- paste0("ENSG", formatC(1:n_genes, width=5, flag="0"))
+
+# Create simulated count data
+count_data <- matrix(
+  rnbinom(n_genes * n_samples, mu = 500, size = 20),
+  nrow = n_genes,
+  ncol = n_samples
+)
+rownames(count_data) <- gene_ids
+colnames(count_data) <- paste0("sample_", 1:n_samples)
+
+# Add differential expression for 100 genes
+de_genes <- sample(1:n_genes, 100)
+count_data[de_genes, 7:12] <- count_data[de_genes, 7:12] * round(runif(100, 2, 8)) # Upregulate in luminal
+
+# Create sample information
+col_data <- data.frame(
+  sample = colnames(count_data),
+  condition = rep(c("basal", "luminal"), each = 6),
+  patient = rep(paste0("patient_", 1:6), 2)
+) %>%
+  mutate(condition = factor(condition, levels = c("basal", "luminal")))
+
+# View what we have
+cat("Dimensions of count data:", dim(count_data), "(genes x samples)\n")
+cat("Sample information:\n")
+print(col_data)
+cat("Levels of condition factor:", levels(col_data$condition), "\n")
