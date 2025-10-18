@@ -35,7 +35,7 @@ generate_synthetic_genomics_dataset <- function(
   
   ref_file <- paste0(output_prefix, "_reference.fa")
   writeXStringSet(synthetic_chr, filepath = ref_file, format = "fasta")
-  cat("   ✓ Reference genome saved:", ref_file, "\n")
+  cat("Reference genome saved:", ref_file, "\n")
   
   # Step 2: Generate Variants (VCF) 
   cat("2. Generating variants...\n")
